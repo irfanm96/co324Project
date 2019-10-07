@@ -1,4 +1,3 @@
-package multicast;
 
 public class Main {
 
