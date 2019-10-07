@@ -25,7 +25,7 @@ public class MulticastSocketServer extends Thread {
         try (DatagramSocket serverSocket = new DatagramSocket()) {
             int i = 0;
             while (true) {
-                String msg = "Sent message from irfan " + i;
+                String msg = "its me Rajini Murugan " + i;
 
                 // Create a packet that will contain the data
                 // (in the form of bytes) and send it.
