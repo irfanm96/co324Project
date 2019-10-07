@@ -72,7 +72,7 @@ public class Multisend extends Thread{
     @Override
     public void run() {
         try {
-            this.sendSocket = new MulticastSocket(20000);
+            this.sendSocket = new MulticastSocket(8888);
             this.captureAudio();
             this.byteArrayOutputStream = new ByteArrayOutputStream();
             this.sendSocket.joinGroup(this.hostName);
@@ -89,9 +89,9 @@ public class Multisend extends Thread{
 
 
                         // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.hostName,25000);
+                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.hostName,8888);
 
-                        System.out.println("send packet");
+//                        System.out.println("send packet");
                         // Send the packet
                         this.sendSocket.send(packet);
 
@@ -145,7 +145,7 @@ public class Multisend extends Thread{
             try {
 
                 // Construct the socket
-                MulticastSocket recieveSocket = new MulticastSocket(25000);
+                MulticastSocket recieveSocket = new MulticastSocket(8888);
                 // Create a packet
                 DatagramPacket recievedPacket = new DatagramPacket(new byte[500], (500));
 
@@ -171,7 +171,7 @@ public class Multisend extends Thread{
                     try {
 
 
-                        System.out.println("recive packet");
+//                        System.out.println("recive packet");
 
                         // Receive a packet (blocking)
                         recieveSocket.receive(recievedPacket);
