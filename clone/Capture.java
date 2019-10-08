@@ -20,8 +20,8 @@ public class Capture extends Voice {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
-            System.out.println("Sending...");
-            String msg = "Hai";
+//            System.out.println("Sending...");
+            String msg = "Hai from irfan";
             byte[] bufSend = msg.getBytes();
 
             DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);

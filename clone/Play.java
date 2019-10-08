@@ -29,12 +29,12 @@ public class Play extends Voice {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                System.out.println("Receiving...");
+//                System.out.println("Receiving...");
                 DatagramPacket packetReceive = new DatagramPacket(bufReceive, bufReceive.length);
                 try {
                     socket.receive(packetReceive);
-                    System.out.println("msg...");
-                    System.out.println(new String(bufReceive));
+                    System.out.println();
+                    System.out.println("msg..." + new String(bufReceive));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
