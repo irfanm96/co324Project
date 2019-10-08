@@ -14,51 +14,51 @@ public class Capture extends Voice {
 
     private  void captureAndSend() {
         this.stopCapture = true;
-        while (true) {
-
-
-            System.out.print("");
-
-            if (!this.stopCapture) {
+//        while (true) {
 //
+//
+//            System.out.print("");
+//
+//            if (!this.stopCapture) {
+////
+////                try {
+////                    Thread.sleep(2000);
+////                } catch (InterruptedException e1) {
+////                    e1.printStackTrace();
+////                }
+//                System.out.println("Sending...");
+//                String msg = "Hai from irfan";
+//                byte[] bufSend = msg.getBytes();
+//
+//                DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);
 //                try {
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e1) {
-//                    e1.printStackTrace();
-//                }
-                System.out.println("Sending...");
-                String msg = "Hai from irfan";
-                byte[] bufSend = msg.getBytes();
-
-                DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);
-                try {
-                    socket.send(packetSend);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-//        try {
-//            int readCount;
-//            while (true) {
-//                if (!this.stopCapture) {
-//                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
-//
-//                    if (readCount > 0) {
-//
-//                        // Construct the datagram packet
-//                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 55001);
-//
-//                        // Send the packet
-//                        this.socket.send(packet);
-//                    }
+//                    socket.send(packetSend);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
 //                }
 //            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
 //        }
+
+
+        try {
+            int readCount;
+            while (true) {
+                if (!this.stopCapture) {
+                    readCount = this.getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+
+                    if (readCount > 0) {
+                        System.out.println("sending audio");
+                        // Construct the datagram packet
+                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 3575);
+                        // Send the packet
+                        this.socket.send(packet);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void stopCapture() {
