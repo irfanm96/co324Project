@@ -1,6 +1,6 @@
 import java.net.*;
 
-public class Play extends Main {
+public class Play extends Voice {
 
     private final int packetsize = 1000;
     private final int port = 55001;

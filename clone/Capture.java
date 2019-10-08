@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 
-public class Capture extends Main {
+public class Capture extends Voice {
 
     private final int packetsize = 1000;
     private final int port = 55000;
