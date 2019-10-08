@@ -45,7 +45,7 @@ public class Capture extends Main {
 
     public void run() {
         try {
-            this.socket = new MulticastSocket();
+            this.socket = new MulticastSocket(8888);
             this.socket.setBroadcast(true);
             this.socket.joinGroup(this.host);
             this.captureAudio();
