@@ -23,20 +23,23 @@ public class Play extends Voice {
 
             byte[] bufReceive = new byte[1024];
             while (true) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+                System.out.print("");
+                if (!this.stopPlay) {
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e1) {
+//                        // TODO Auto-generated catch block
+//                        e1.printStackTrace();
+//                    }
 //                System.out.println("Receiving...");
-                DatagramPacket packetReceive = new DatagramPacket(bufReceive, bufReceive.length);
-                try {
-                    socket.receive(packetReceive);
-                    System.out.println();
-                    System.out.println("msg..." + new String(bufReceive));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    DatagramPacket packetReceive = new DatagramPacket(bufReceive, bufReceive.length);
+                    try {
+                        socket.receive(packetReceive);
+                        System.out.println();
+                        System.out.println("msg..." + new String(bufReceive));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -72,10 +75,12 @@ public class Play extends Voice {
     }
     
     public void stopPlay() {
+        System.out.println("stop play equal to True");
         this.stopPlay = true;
     }
     
     public void startPlay() {
+        System.out.println("stop play equal to False");
         this.stopPlay = false;
     }
 }

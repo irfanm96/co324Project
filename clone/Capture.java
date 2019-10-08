@@ -12,29 +12,34 @@ public class Capture extends Voice {
     private byte tempBuffer[] = new byte[this.packetsize];
     private boolean stopCapture = true;
 
-    private void captureAndSend() {
-
+    private synchronized void captureAndSend() {
+        this.stopCapture = true;
         while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-//            System.out.println("Sending...");
-            String msg = "Hai from irfan";
-            byte[] bufSend = msg.getBytes();
 
-            DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);
-            try {
-                socket.send(packetSend);
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            System.out.print("");
+
+            if (!this.stopCapture) {
+//
+//                try {
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e1) {
+//                    e1.printStackTrace();
+//                }
+                System.out.println("Sending...");
+                String msg = "Hai from irfan";
+                byte[] bufSend = msg.getBytes();
+
+                DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);
+                try {
+                    socket.send(packetSend);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
 
-
-//        this.stopCapture = true;
 //        try {
 //            int readCount;
 //            while (true) {
@@ -55,12 +60,14 @@ public class Capture extends Voice {
 //            e.printStackTrace();
 //        }
     }
-    
-    public void stopCapture(){
+
+    public void stopCapture() {
+        System.out.println("stop capture is true");
         this.stopCapture = true;
     }
-    
-    public void startCapture(){
+
+    public void startCapture() {
+        System.out.println("stop capture is false");
         this.stopCapture = false;
     }
 
@@ -94,7 +101,7 @@ public class Capture extends Voice {
             System.out.println("DatagramClient host ");
             return;
         }
-        
+
         Capture cap = null;
         Play ply = null;
 
@@ -109,13 +116,13 @@ public class Capture extends Voice {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         Scanner in = new Scanner(System.in);
         boolean state = true; // playing
-        
-        while(true && (cap != null) && (ply != null)){
+
+        while (true && (cap != null) && (ply != null)) {
             in.nextLine();
-            if(state) {
+            if (state) {
                 cap.stopCapture();
                 ply.startPlay();
                 System.out.println("Playing...");
@@ -126,6 +133,6 @@ public class Capture extends Voice {
                 System.out.println("Capturing...");
                 state = true;
             }
-        } 
+        }
     }
 }
