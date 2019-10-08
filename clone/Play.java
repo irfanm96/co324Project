@@ -44,12 +44,14 @@ public class Play extends Voice {
 //                }
 //            }
 
-            this.stopPlay= true;
+            this.stopPlay = true;
             this.playAudio();
             while (true) {
+                System.out.print("");
                 if (!this.stopPlay) {
                     try {
 
+                        System.out.println("reciving");
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
 
@@ -70,16 +72,16 @@ public class Play extends Voice {
             this.socket.close();
         }
     }
-    
+
     public Play(InetAddress host) {
         this.host = host;
     }
-    
+
     public void stopPlay() {
         System.out.println("stop play equal to True");
         this.stopPlay = true;
     }
-    
+
     public void startPlay() {
         System.out.println("stop play equal to False");
         this.stopPlay = false;

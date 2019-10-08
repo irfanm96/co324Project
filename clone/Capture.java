@@ -17,7 +17,6 @@ public class Capture extends Voice {
 //        while (true) {
 //
 //
-//            System.out.print("");
 //
 //            if (!this.stopCapture) {
 ////
@@ -43,6 +42,7 @@ public class Capture extends Voice {
         try {
             int readCount;
             while (true) {
+                System.out.print("");
                 if (!this.stopCapture) {
                     readCount = this.getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
