@@ -58,7 +58,8 @@ public class Play extends Voice {
                         // Print the packet
                         this.getSourceDataLine().write(packet.getData(), 0, this.packetsize); //playing the audio
 
-                        packet.setLength(this.packetsize);
+//                        packet.setLength(this.packetsize);
+                        packet = new DatagramPacket(new byte[this.packetsize], (this.packetsize));
 
                     } catch (Exception e) {
                         e.printStackTrace();
