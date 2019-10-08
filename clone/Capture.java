@@ -12,7 +12,7 @@ public class Capture extends Voice {
     private byte tempBuffer[] = new byte[this.packetsize];
     private boolean stopCapture = true;
 
-    private synchronized void captureAndSend() {
+    private  void captureAndSend() {
         this.stopCapture = true;
         while (true) {
 
@@ -76,7 +76,7 @@ public class Capture extends Voice {
             this.socket = new MulticastSocket(3575);
             this.socket.setBroadcast(true);
             this.socket.joinGroup(this.host);
-//            this.captureAudio();
+            this.captureAudio();
             this.captureAndSend();
 
         } catch (Exception e) {

@@ -31,6 +31,7 @@ public class Play extends Voice {
 //                        // TODO Auto-generated catch block
 //                        e1.printStackTrace();
 //                    }
+
 //                System.out.println("Receiving...");
                     DatagramPacket packetReceive = new DatagramPacket(bufReceive, bufReceive.length);
                     try {
