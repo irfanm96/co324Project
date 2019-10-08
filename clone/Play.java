@@ -14,6 +14,7 @@ public class Play extends Main {
         try {
             // Construct the socket
             this.socket = new MulticastSocket(this.port);
+            this.socket.setBroadcast(true);
             this.socket.joinGroup(this.host);
             System.out.println("The server is ready");
 

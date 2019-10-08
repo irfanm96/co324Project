@@ -9,7 +9,7 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
-public class Main extends Thread{
+public class Voice extends Thread{
 
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
