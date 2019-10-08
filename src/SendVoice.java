@@ -3,13 +3,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.sound.sampled.*;
 
-public class SendVoice extends Thread{ //extend
+public class SendVoice extends Thread {
+    private InetAddress groupMulticast; //extend
 
-    private InetAddress hostName;
-    private DatagramSocket socket;
     private ByteArrayOutputStream byteArrayOutputStream = null;
     private byte tempBuffer[] = new byte[500];
-    private static boolean stopCapture = false;
+    private boolean stopCapture = false;
+
+    private MulticastSocket multiSocket;
+
 
     public AudioFormat audioFormatsend;
     private TargetDataLine targetDataLine;
@@ -23,7 +25,7 @@ public class SendVoice extends Thread{ //extend
         return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
     }
 
-    public synchronized void  captureAudio() {
+    public synchronized void captureAudio() {
         try {
             Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();    //get available mixers
             System.out.println("Available mixers:");
@@ -55,7 +57,6 @@ public class SendVoice extends Thread{ //extend
     @Override
     public void run() {
         try {
-            this.socket = new DatagramSocket(20000);
             this.captureAudio();
             this.byteArrayOutputStream = new ByteArrayOutputStream();
             stopCapture = false;
@@ -68,10 +69,10 @@ public class SendVoice extends Thread{ //extend
                         this.byteArrayOutputStream.write(this.tempBuffer, 0, readCount);
 
                         // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.hostName,25000);
+                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.groupMulticast, 25000);
 
                         // Send the packet
-                        this.socket.send(packet);
+                        this.multiSocket.send(packet);
                     }
                 }
                 this.byteArrayOutputStream.close();
@@ -85,28 +86,30 @@ public class SendVoice extends Thread{ //extend
             e.printStackTrace();
 
         } finally {
-            this.socket.close();
+            this.multiSocket.close();
         }
     }
 
-    public SendVoice(InetAddress hostName) {
-        this.hostName = hostName;
+    public SendVoice() {
+        try {
+            multiSocket = new MulticastSocket(3575);
+            groupMulticast = InetAddress.getByName("224.0.0.1");
+            multiSocket.setBroadcast(true);
+            multiSocket.joinGroup(groupMulticast);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {
 
-        // Check the whether the arguments are given
-        if (args.length != 1) {
-            System.out.println("Usage : java Capture <hostName>");
-            return;
-        }
-
         try {
 
-            SendVoice t1 = new SendVoice(InetAddress.getByName(args[0]));
+            SendVoice t1 = new SendVoice();
             t1.start();
 
-            RecieveVoice t2 = new  RecieveVoice();
+            RecieveVoice t2 = new RecieveVoice();
             t2.start();
 
         } catch (Exception e) {
@@ -114,64 +117,81 @@ public class SendVoice extends Thread{ //extend
         }
     }
 
-     static class RecieveVoice extends Thread {
+}
 
-        private AudioFormat audioFormatRecieve;
-        private SourceDataLine sourceDataLine;
+class RecieveVoice extends Thread {
 
-        @Override
-        public void run() {
+    private MulticastSocket multiSocket;
+    private InetAddress groupMulticast;
 
-            try {
+    private AudioFormat audioFormatRecieve;
+    private SourceDataLine sourceDataLine;
+    private boolean stopCapture = false;
 
-                // Construct the socket
-                DatagramSocket recieveSocket = new DatagramSocket(25000);
-                // Create a packet
-                DatagramPacket recievedPacket = new DatagramPacket(new byte[500], (500));
-
-                try {
-                    audioFormatRecieve = getAudioFormat();     //get the audio format
-
-                    DataLine.Info dataLineInfo1 = new DataLine.Info(SourceDataLine.class, audioFormatRecieve);
-                    sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo1);
-                    sourceDataLine.open(audioFormatRecieve);
-                    sourceDataLine.start();
-
-//            //Setting the maximum volume
-                    FloatControl control = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
-                    control.setValue(control.getMaximum()/2);
-
-                } catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                    System.exit(0);
-                }
-
-                while (!stopCapture) {
-
-                    try {
-
-                        // Receive a packet (blocking)
-                        recieveSocket.receive(recievedPacket);
-
-                        // Print the packet
-                        this.sourceDataLine.write(recievedPacket.getData(), 0, 500); //playing the audio
-
-                    } catch (Exception e) {
-
-                        e.printStackTrace();
-
-                    }
-
-                }
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-            }
-
+    public RecieveVoice() {
+        try {
+            multiSocket = new MulticastSocket(3575);
+            groupMulticast = InetAddress.getByName("224.0.0.1");
+            multiSocket.setBroadcast(true);
+            multiSocket.joinGroup(groupMulticast);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
     }
+
+    @Override
+    public void run() {
+
+        try {
+
+            // Construct the socket
+            // Create a packet
+            DatagramPacket recievedPacket = new DatagramPacket(new byte[500], (500));
+
+            try {
+                audioFormatRecieve = SendVoice.getAudioFormat();     //get the audio format
+
+                DataLine.Info dataLineInfo1 = new DataLine.Info(SourceDataLine.class, audioFormatRecieve);
+                sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo1);
+                sourceDataLine.open(audioFormatRecieve);
+                sourceDataLine.start();
+
+//            //Setting the maximum volume
+                FloatControl control = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
+                control.setValue(control.getMaximum() / 2);
+
+            } catch (LineUnavailableException e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+
+            while (!this.stopCapture) {
+
+                try {
+
+                    // Receive a packet (blocking)
+                    multiSocket.receive(recievedPacket);
+
+                    // Print the packet
+                    this.sourceDataLine.write(recievedPacket.getData(), 0, 500); //playing the audio
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                }
+
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+
+
 }
