@@ -13,26 +13,47 @@ public class Capture extends Voice {
     private boolean stopCapture = true;
 
     private void captureAndSend() {
-        this.stopCapture = true;
-        try {
-            int readCount;
-            while (true) {
-                if (!this.stopCapture) {
-                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
-                    if (readCount > 0) {
-
-                        // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 55001);
-
-                        // Send the packet
-                        this.socket.send(packet);
-                    }
-                }
+        while (true) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Sending...");
+            String msg = "Hai";
+            byte[] bufSend = msg.getBytes();
+
+            DatagramPacket packetSend = new DatagramPacket(bufSend, bufSend.length, this.host, 3575);
+            try {
+                socket.send(packetSend);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+
+
+//        this.stopCapture = true;
+//        try {
+//            int readCount;
+//            while (true) {
+//                if (!this.stopCapture) {
+//                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+//
+//                    if (readCount > 0) {
+//
+//                        // Construct the datagram packet
+//                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 55001);
+//
+//                        // Send the packet
+//                        this.socket.send(packet);
+//                    }
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
     
     public void stopCapture(){
@@ -45,10 +66,10 @@ public class Capture extends Voice {
 
     public void run() {
         try {
-            this.socket = new MulticastSocket(8888);
+            this.socket = new MulticastSocket(3575);
             this.socket.setBroadcast(true);
             this.socket.joinGroup(this.host);
-            this.captureAudio();
+//            this.captureAudio();
             this.captureAndSend();
 
         } catch (Exception e) {
